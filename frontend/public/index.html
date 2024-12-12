@@ -8,8 +8,199 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="%PUBLIC_URL%/css/styles.css" />
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to right, #ff7e5f, #feb47b);
+        color: #333;
+      }
+      header {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+        border-bottom: 5px solid #ff7e5f;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        overflow: hidden;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      .search-bar input {
+        padding: 0.7rem;
+        width: 100%;
+        max-width: 350px;
+        border: 2px solid #2575fc;
+        border-radius: 25px;
+        outline: none;
+        font-size: 1rem;
+        transition: 0.3s;
+      }
+      .search-bar input:focus {
+        border-color: #6a11cb;
+        box-shadow: 0 0 8px rgba(106, 17, 203, 0.5);
+      }
+      .add-item-btn {
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 25px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .add-item-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+      }
+      .inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        font-size: 1rem;
+        overflow-x: auto;
+      }
+      .inventory-table th, .inventory-table td {
+        border: 2px solid #f3f3f3;
+        padding: 1rem;
+        text-align: left;
+        transition: background 0.3s;
+      }
+      .inventory-table th {
+        background: #2575fc;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .inventory-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .inventory-table tr:hover td {
+        background: #ffedd5;
+      }
+      .inventory-table button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #fff;
+        background: #ff416c;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .inventory-table button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>  
+    <header>
+      <h1>Inventory Management</h1>
+    </header>
+    <div class="container">
+      <div class="actions">
+        <div class="search-bar">
+          <input type="text" id="search" placeholder="Search inventory..." />
+        </div>
+        <button class="add-item-btn" id="addItemBtn">Add New Item</button>
+      </div>
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryTableBody">
+          <!-- Inventory items will be dynamically inserted here -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // Mock data
+      const inventory = [
+        { name: 'Laptop', quantity: 10, price: 800 },
+        { name: 'Mouse', quantity: 50, price: 20 },
+        { name: 'Keyboard', quantity: 30, price: 30 }
+      ];
+
+      const tableBody = document.getElementById('inventoryTableBody');
+      const searchInput = document.getElementById('search');
+
+      // Function to render inventory items
+      function renderInventory(items) {
+        tableBody.innerHTML = '';
+        items.forEach((item, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.quantity}</td>
+            <td>$${item.price.toFixed(2)}</td>
+            <td><button onclick="deleteItem(${index})">Delete</button></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Function to filter inventory
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = inventory.filter(item =>
+          item.name.toLowerCase().includes(query)
+        );
+        renderInventory(filtered);
+      });
+
+      // Function to delete an item
+      function deleteItem(index) {
+        inventory.splice(index, 1);
+        renderInventory(inventory);
+      }
+
+      // Render initial inventory
+      renderInventory(inventory);
+
+      // Add Item Button
+      document.getElementById('addItemBtn').addEventListener('click', () => {
+        const itemName = prompt('Enter item name:');
+        const quantity = parseInt(prompt('Enter quantity:'), 10);
+        const price = parseFloat(prompt('Enter price:'));
+
+        if (itemName && !isNaN(quantity) && !isNaN(price)) {
+          inventory.push({ name: itemName, quantity, price });
+          renderInventory(inventory);
+        } else {
+          alert('Invalid input. Please try again.');
+        }
+      });
+    </script>
   </body>
 </html>

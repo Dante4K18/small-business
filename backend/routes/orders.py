@@ -67,27 +67,6 @@ def create_order():
         return jsonify({'error': 'An error occurred while creating the order'}), 500
     
 
-# @orders_bp.route('/', methods=['POST'])
-# def create_order():
-#     # Importing db and models here to avoid circular import
-#     from models import Order, Product, db
-
-#     data = request.get_json()
-#     product = Product.query.get(data['product_id'])
-#     if not product or product.stock_quantity < data['quantity']:
-#         return jsonify({'error': 'Insufficient stock!'}), 400
-#     product.stock_quantity -= data['quantity']
-#     new_order = Order(
-#         user_id=data['user_id'],
-#         product_id=data['product_id'],
-#         quantity=data['quantity'],
-#         order_date=datetime.utcnow(),
-#         status='pending'
-#     )
-#     db.session.add(new_order)
-#     db.session.commit()
-#     return jsonify({'message': 'Order created successfully!'}), 201
-
 @orders_bp.route('/<int:id>', methods=['PUT'])
 def update_order_status(id):
     # Importing db and models here to avoid circular import
